@@ -282,6 +282,79 @@ class UnitConvert(object):
         if not self._types:
             raise ValueError('input values do not have a common type')
 
+    def _op(self, value, op):
+        """Perform an operation to combine two UnitConvert instances."""
+        if not isinstance(value, UnitConvert):
+            raise TypeError('must be a UnitConvert instance')
+
+        new = deepcopy(self)
+        new._types &= value._types
+        if not new._types:
+            raise ValueError('no common types')
+
+        for k, v in value._totals.items():
+            new._totals[k] = getattr(new._totals[k], op)(v)
+
+        return new
+
+    def __add__(self, value):
+        """Add two UnitConvert instances together."""
+        return self._op(value, '__add__')
+
+    def __sub__(self, value):
+        """Subtract one UnitConvert instance from another."""
+        return self._op(value, '__sub__')
+
+    def __mul__(self, value):
+        """Multiply all values by an amount."""
+        new = deepcopy(self)
+        for k in new._totals:
+            new._totals[k] *= value
+        return new
+    __rmul__ = __mul__
+
+    def __floordiv__(self, value):
+        """Divide all values by an amount."""
+        new = deepcopy(self)
+        for k in new._totals:
+            new._totals[k] //= value
+        return new
+
+    def __rfloordiv__(self, value):
+        """Divide all values by an amount."""
+        new = deepcopy(self)
+        for k in new._totals:
+            new._totals[k] = value // new._totals[k]
+        return new
+
+    def __truediv__(self, value):
+        """Divide all values by an amount."""
+        new = deepcopy(self)
+        for k in new._totals:
+            new._totals[k] /= value
+        return new
+
+    def __rtruediv__(self, value):
+        """Divide all values by an amount."""
+        new = deepcopy(self)
+        for k in new._totals:
+            new._totals[k] = value / new._totals[k]
+        return new
+
+    def __pow__(self, value):
+        """Raise all values to a power."""
+        new = deepcopy(self)
+        for k in new._totals:
+            new._totals[k] **= value
+        return new
+
+    def __rpow__(self, value):
+        """Raise a number to the power of all values."""
+        new = deepcopy(self)
+        for k in new._totals:
+            new._totals[k] = value ** new._totals[k]
+        return new
+
     def __getattr__(self, attr):
         """Convert to an output value.
 
