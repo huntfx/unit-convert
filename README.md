@@ -23,4 +23,4 @@ For conveniance, abbreviations are accepted, where an attempt will be made to ca
 ['nm', 'nanometres', 'μm', 'micrometres', 'mm', 'millimetres', 'cm', 'centimetres', 'i', 'inches', 'ft', 'feet', 'm', 'metres', 'meters', 'yd', 'yards', 'km', 'kilometres', 'kilometers', 'miles', 'lightyears', 'au', 'astronomical_units', 'parsec']
 ```
 
-Data size, time, distance and mass are supported.
+Data size, time, distance, mass and temperatures are supported.

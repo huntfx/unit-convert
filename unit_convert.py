@@ -5,7 +5,7 @@ from __future__ import division
 
 __version__ = '1.1.0'
 
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from copy import deepcopy
 
 
@@ -14,220 +14,242 @@ class Unit:
     Distance = 1
     Time = 3
     Mass = 4
+    Temperature = 5
+
+
+ConversionValue = namedtuple('ConversionValue', 'value offset', defaults=[0])
 
 
 class UnitConvert(object):
     Data = {
         'b': {
-            Unit.Data: 1,
+            Unit.Data: ConversionValue(1),
         },
         'bytes': {
-            Unit.Data: 1,
+            Unit.Data: ConversionValue(1),
         },
         'kb': {
-            Unit.Data: 1024,
+            Unit.Data: ConversionValue(1024),
         },
         'kilobytes': {
-            Unit.Data: 1024,
+            Unit.Data: ConversionValue(1024),
         },
         'mb': {
-            Unit.Data: 1048576,
+            Unit.Data: ConversionValue(1048576),
         },
         'megabytes': {
-            Unit.Data: 1048576,
+            Unit.Data: ConversionValue(1048576),
         },
         'gb': {
-            Unit.Data: 1073741824,
+            Unit.Data: ConversionValue(1073741824),
         },
         'gigabytes': {
-            Unit.Data: 1073741824,
+            Unit.Data: ConversionValue(1073741824),
         },
         'tb': {
-            Unit.Data: 1099511627776,
+            Unit.Data: ConversionValue(1099511627776),
         },
         'terabytes': {
-            Unit.Data: 1099511627776,
+            Unit.Data: ConversionValue(1099511627776),
         },
         'pb': {
-            Unit.Data: 1125899906842624,
+            Unit.Data: ConversionValue(1125899906842624),
         },
         'petabytes': {
-            Unit.Data: 1125899906842624,
+            Unit.Data: ConversionValue(1125899906842624),
         },
         'nm': {
-            Unit.Distance: 0.000000001,
+            Unit.Distance: ConversionValue(0.000000001),
         },
         'nanometres': {
-            Unit.Distance: 0.000000001,
+            Unit.Distance: ConversionValue(0.000000001),
         },
         'μm': {
-            Unit.Distance: 0.000001,
+            Unit.Distance: ConversionValue(0.000001),
         },
         'micrometres': {
-            Unit.Distance: 0.000001,
+            Unit.Distance: ConversionValue(0.000001),
         },
         'mm': {
-            Unit.Distance: 0.001,
+            Unit.Distance: ConversionValue(0.001),
         },
         'millimetres': {
-            Unit.Distance: 0.001,
+            Unit.Distance: ConversionValue(0.001),
         },
         'cm': {
-            Unit.Distance: 0.01,
+            Unit.Distance: ConversionValue(0.01),
         },
         'centimetres': {
-            Unit.Distance: 0.01,
+            Unit.Distance: ConversionValue(0.01),
         },
         'i': {
-            Unit.Distance: 0.0254,
+            Unit.Distance: ConversionValue(0.0254),
         },
         'inches': {
-            Unit.Distance: 0.0254,
+            Unit.Distance: ConversionValue(0.0254),
         },
         'ft': {
-            Unit.Distance: 0.3048
+            Unit.Distance: ConversionValue(0.3048),
         },
         'feet': {
-            Unit.Distance: 0.3048
+            Unit.Distance: ConversionValue(0.3048),
         },
         'm': {
-            Unit.Distance: 1,
-            Unit.Time: 60,
+            Unit.Distance: ConversionValue(1),
+            Unit.Time: ConversionValue(60),
         },
         'metres': {
-            Unit.Distance: 1,
+            Unit.Distance: ConversionValue(1),
         },
         'meters': {
-            Unit.Distance: 1,
+            Unit.Distance: ConversionValue(1),
         },
         'yd': {
-            Unit.Distance: 0.914400,
+            Unit.Distance: ConversionValue(0.914400),
         },
         'yards': {
-            Unit.Distance: 0.914400,
+            Unit.Distance: ConversionValue(0.914400),
         },
         'km': {
-            Unit.Distance: 1000,
+            Unit.Distance: ConversionValue(1000),
         },
         'kilometres': {
-            Unit.Distance: 1000,
+            Unit.Distance: ConversionValue(1000),
         },
         'kilometers': {
-            Unit.Distance: 1000,
+            Unit.Distance: ConversionValue(1000),
         },
         'miles': {
-            Unit.Distance: 1609.34,
+            Unit.Distance: ConversionValue(1609.34),
         },
         'lightyears': {
-            Unit.Distance: 9460528405000000,
+            Unit.Distance: ConversionValue(9460528405000000),
         },
         'au': {
-            Unit.Distance: 149598550000,
+            Unit.Distance: ConversionValue(149598550000),
         },
         'astronomical_units': {
-            Unit.Distance: 149598550000,
+            Unit.Distance: ConversionValue(149598550000),
         },
         'parsec': {
-            Unit.Distance: 30856776000000000,
+            Unit.Distance: ConversionValue(30856776000000000),
         },
         'ns': {
-            Unit.Time: 0.000000001,
+            Unit.Time: ConversionValue(0.000000001),
         },
         'nanoseconds': {
-            Unit.Time: 0.000000001,
+            Unit.Time: ConversionValue(0.000000001),
         },
         'μs': {
-            Unit.Time: 0.000001,
+            Unit.Time: ConversionValue(0.000001),
         },
         'microseconds': {
-            Unit.Time: 0.000001,
+            Unit.Time: ConversionValue(0.000001),
         },
         'ms': {
-            Unit.Time: 0.001,
+            Unit.Time: ConversionValue(0.001),
         },
         'milliseconds': {
-            Unit.Time: 0.001,
+            Unit.Time: ConversionValue(0.001),
         },
         'seconds': {
-            Unit.Time: 1,
+            Unit.Time: ConversionValue(1),
         },
         's': {
-            Unit.Time: 1,
+            Unit.Time: ConversionValue(1),
         },
         'minutes': {
-            Unit.Time: 60,
+            Unit.Time: ConversionValue(60),
         },
         'hours': {
-            Unit.Time: 3600,
+            Unit.Time: ConversionValue(3600),
         },
         'h': {
-            Unit.Time: 3600,
+            Unit.Time: ConversionValue(3600),
         },
         'days': {
-            Unit.Time: 86400,
+            Unit.Time: ConversionValue(86400),
         },
         'd': {
-            Unit.Time: 86400,
+            Unit.Time: ConversionValue(86400),
         },
         'weeks': {
-            Unit.Time: 604800,
+            Unit.Time: ConversionValue(604800),
         },
         'w': {
-            Unit.Time: 604800,
+            Unit.Time: ConversionValue(604800),
         },
         'months': {
-            Unit.Time: 2627424,
+            Unit.Time: ConversionValue(2627424),
         },
         'years': {
-            Unit.Time: 31536000,
+            Unit.Time: ConversionValue(31536000),
         },
         'y': {
-            Unit.Time: 31536000,
+            Unit.Time: ConversionValue(31536000),
         },
         'decades': {
-            Unit.Time: 315360000,
+            Unit.Time: ConversionValue(315360000),
         },
         'centurys': {
-            Unit.Time: 3153600000,
+            Unit.Time: ConversionValue(3153600000),
         },
         'g': {
-            Unit.Mass: 1,
+            Unit.Mass: ConversionValue(1),
         },
         'grams': {
-            Unit.Mass: 1,
+            Unit.Mass: ConversionValue(1),
         },
         'kg': {
-            Unit.Mass: 10000,
+            Unit.Mass: ConversionValue(10000),
         },
         'kilograms': {
-            Unit.Mass: 10000,
+            Unit.Mass: ConversionValue(10000),
         },
         'oz': {
-            Unit.Mass: 28.349523,
+            Unit.Mass: ConversionValue(28.349523),
         },
         'ounces': {
-            Unit.Mass: 28.349523,
+            Unit.Mass: ConversionValue(28.349523),
         },
         'lbs': {
-            Unit.Mass: 453.59237,
+            Unit.Mass: ConversionValue(453.59237),
         },
         'pounds': {
-            Unit.Mass: 453.59237,
+            Unit.Mass: ConversionValue(453.59237),
         },
         't': {
-            Unit.Mass: 1000000,
+            Unit.Mass: ConversionValue(1000000),
         },
         'tons': {
-            Unit.Mass: 907185,
+            Unit.Mass: ConversionValue(907185),
         },
         'tonnes': {
-            Unit.Mass: 1000000,
+            Unit.Mass: ConversionValue(1000000),
         },
         'st': {
-            Unit.Mass: 6350.29318,
+            Unit.Mass: ConversionValue(6350.29318),
         },
         'stones': {
-            Unit.Mass: 6350.29318,
+            Unit.Mass: ConversionValue(6350.29318),
+        },
+        'k': {
+            Unit.Temperature: ConversionValue(1, 273.15),
+        },
+        'kelvin': {
+            Unit.Temperature: ConversionValue(1, 273.15),
+        },
+        'c': {
+            Unit.Temperature: ConversionValue(1),
+        },
+        'celcius': {
+            Unit.Temperature: ConversionValue(1),
+        },
+        'f': {
+            Unit.Temperature: ConversionValue(5 / 9, 32),
+        },
+        'farenheit': {
+            Unit.Temperature: ConversionValue(5 / 9, 32),
         },
     }
 
@@ -276,8 +298,8 @@ class UnitConvert(object):
                     self._types &= unit_types
 
                 # Add to totals
-                for value_type, value_multiplier in unit_data.items():
-                    self._totals[value_type] += float(value * value_multiplier)
+                for value_type, conversion_value in unit_data.items():
+                    self._totals[value_type] += float((value - conversion_value.offset) * conversion_value.value)
 
         if not self._types:
             raise ValueError('input values do not have a common type')
@@ -380,8 +402,8 @@ class UnitConvert(object):
         unit = possible_units.pop()
 
         original_value = self._totals[unit]
-        multiplier = self.Data[item][unit]
-        return original_value / multiplier
+        conversion_value = self.Data[item][unit]
+        return original_value / conversion_value.value + conversion_value.offset
 
     def keys(self):
         """Return a list of all available unit types."""
