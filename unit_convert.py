@@ -201,10 +201,10 @@ class UnitConvert(object):
             Unit.Mass: ConversionValue(1),
         },
         'kg': {
-            Unit.Mass: ConversionValue(10000),
+            Unit.Mass: ConversionValue(1000),
         },
         'kilograms': {
-            Unit.Mass: ConversionValue(10000),
+            Unit.Mass: ConversionValue(1000),
         },
         'oz': {
             Unit.Mass: ConversionValue(28.349523),
