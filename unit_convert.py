@@ -17,6 +17,38 @@ class Unit:
     Temperature = 5
 
 
+class ConversionError(ValueError):
+    def __init__(self, unit_type):
+        super(ConversionError, self).__init__("unable to convert to '{}'".format(unit_type))
+
+
+class Symbol(object):
+    def __init__(self, name, valid=True):
+        self.name = name
+        self.valid = valid
+
+    def __bool__(self):
+        return self.valid
+    __nonzero__ = __bool__
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return "{}({})".format(type(self).__name__, self.name)
+
+    def __eq__(self, other):
+        if isinstance(other, Symbol):
+            return self.name == other.name
+        return self.name == other
+
+    def __hash__(self):
+        return hash(self.name)
+
+
+UnclearUnitType = Symbol('UNCLEAR_UNIT_TYPE', False)
+
+
 ConversionValue = namedtuple('ConversionValue', 'value offset', defaults=[0])
 
 
@@ -399,40 +431,66 @@ class UnitConvert(object):
             return self.__getitem__(attr)
         return super(UnitConvert, self).__getattribute__(attr)
 
-    def __getitem__(self, item):
-        """Convert to an output value."""
-        possible_units = set(self.Data.get(item, {})) & self._types
+    def _get_possible_values(self, unit_type):
+        """Convert to all possible values for a unit type.
+
+        Yields:
+            Float values
+        """
+        for unit in set(self.Data.get(unit_type, {})) & self._types:
+            original_value = self._totals[unit]
+            conversion_value = self.Data[unit_type][unit]
+            yield original_value / conversion_value.value + conversion_value.offset
+
+    def __getitem__(self, unit_type):
+        """Convert to an output value.
+
+        Raises:
+            ConversionError: If unable to convert to the requested type.
+
+        Returns:
+            Float value or `UnclearUnitType` if the result is ambiguous.
+        """
+        value = None
+        for i, value in enumerate(self._get_possible_values(unit_type)):
+            # More than one possible value
+            # An example would be "m" to "m"
+            if i:
+                return UnclearUnitType
 
         # An invalid unit was chosen
-        if not possible_units:
-            raise ValueError('unable to convert to "{}"'.format(item))
+        if value is None:
+            raise ConversionError(unit_type)
+        return value
 
-        # There's too many types to guess
-        # One example would be "m" to "m"
-        if len(possible_units) > 1:
-            raise ValueError('unit type not clear')
-        unit = possible_units.pop()
-
-        original_value = self._totals[unit]
-        conversion_value = self.Data[item][unit]
-        return original_value / conversion_value.value + conversion_value.offset
+    def __iter__(self):
+        """Iterate over all available unit types."""
+        return iter(self.keys())
 
     def keys(self):
         """Return a list of all available unit types."""
         return [k for k, v in self.Data.items() if self._types & set(v)]
 
     def values(self):
-        """Return a list of all available unit values."""
-        return list(map(self.__getitem__, self.keys()))
+        """Return a list of all available unit values.
+        This includes ambiguous values where one key has multiple values.
+        """
+        result = set()
+        for key in self.keys():
+            result.update(self._get_possible_values(key))
+        return list(result)
 
     def items(self):
         """Return a mapping of unit types to values."""
-        keys = self.keys()
-        return dict(zip(keys, map(self.__getitem__, keys)))
+        for key in self.keys():
+            yield key, self.__getitem__(key)
 
     def get(self, item, default=None):
         """Get a conversion if available or fallback to the default value."""
         try:
-            return self.__getattr__(item)
-        except ValueError:
+            value = self.__getattr__(item)
+        except ConversionError:
             return default
+        if value is UnclearUnitType:
+            return default
+        return value
