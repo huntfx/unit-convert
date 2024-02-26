@@ -64,10 +64,16 @@ class UnitConvert(object):
         'nanometres': {
             Unit.Distance: ConversionValue(0.000000001),
         },
+        'nanometers': {
+            Unit.Distance: ConversionValue(0.000000001),
+        },
         'μm': {
             Unit.Distance: ConversionValue(0.000001),
         },
         'micrometres': {
+            Unit.Distance: ConversionValue(0.000001),
+        },
+        'micrometers': {
             Unit.Distance: ConversionValue(0.000001),
         },
         'mm': {
@@ -76,10 +82,16 @@ class UnitConvert(object):
         'millimetres': {
             Unit.Distance: ConversionValue(0.001),
         },
+        'millimeters': {
+            Unit.Distance: ConversionValue(0.001),
+        },
         'cm': {
             Unit.Distance: ConversionValue(0.01),
         },
         'centimetres': {
+            Unit.Distance: ConversionValue(0.01),
+        },
+        'centimeters': {
             Unit.Distance: ConversionValue(0.01),
         },
         'i': {
