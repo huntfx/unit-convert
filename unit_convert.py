@@ -10,6 +10,8 @@ from copy import deepcopy
 
 
 class Unit:
+    """Enum for different unit types."""
+
     Data = 0
     Distance = 1
     Time = 3
@@ -17,36 +19,22 @@ class Unit:
     Temperature = 5
 
 
-class ConversionError(ValueError):
+class BaseError(ValueError):
+    """Base class for conveniance when catching exceptions."""
+
+
+class ConversionError(BaseError):
+    """Raise when a conversion is not possible."""
+
     def __init__(self, unit_type):
         super(ConversionError, self).__init__("unable to convert to '{}'".format(unit_type))
 
 
-class Symbol(object):
-    def __init__(self, name, valid=True):
-        self.name = name
-        self.valid = valid
+class UnclearUnitTypeError(BaseError):
+    """Raise when there is more then one possible conversion."""
 
-    def __bool__(self):
-        return self.valid
-    __nonzero__ = __bool__
-
-    def __str__(self):
-        return self.name
-
-    def __repr__(self):
-        return "{}({})".format(type(self).__name__, self.name)
-
-    def __eq__(self, other):
-        if isinstance(other, Symbol):
-            return self.name == other.name
-        return self.name == other
-
-    def __hash__(self):
-        return hash(self.name)
-
-
-UnclearUnitType = Symbol('UNCLEAR_UNIT_TYPE', False)
+    def __init__(self, unit_type):
+        super(UnclearUnitTypeError, self).__init__("multiple possible conversions found for '{}'".format(unit_type))
 
 
 ConversionValue = namedtuple('ConversionValue', 'value offset', defaults=[0])
@@ -447,16 +435,17 @@ class UnitConvert(object):
 
         Raises:
             ConversionError: If unable to convert to the requested type.
+            UnclearUnitTypeError: If there are more than one types to convert to
 
         Returns:
-            Float value or `UnclearUnitType` if the result is ambiguous.
+            Float value
         """
         value = None
         for i, value in enumerate(self._get_possible_values(unit_type)):
             # More than one possible value
             # An example would be "m" to "m"
             if i:
-                return UnclearUnitType
+                raise UnclearUnitTypeError(unit_type)
 
         # An invalid unit was chosen
         if value is None:
@@ -489,8 +478,6 @@ class UnitConvert(object):
         """Get a conversion if available or fallback to the default value."""
         try:
             value = self.__getattr__(item)
-        except ConversionError:
-            return default
-        if value is UnclearUnitType:
+        except (ConversionError, UnclearUnitTypeError):
             return default
         return value
