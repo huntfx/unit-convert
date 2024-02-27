@@ -3,7 +3,7 @@
 
 from __future__ import division
 
-__version__ = '1.1.0'
+__version__ = '1.2.0'
 
 from collections import defaultdict, namedtuple
 from copy import deepcopy
